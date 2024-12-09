@@ -66,3 +66,6 @@ Thumbs.db
 storage/
 storage/data/
 storage/temp/
+
+# Output directory
+output/

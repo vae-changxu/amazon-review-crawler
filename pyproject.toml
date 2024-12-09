@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "amazon-review-scraper"
+version = "1.0.0"
+description = "亚马逊评论爬虫GUI应用"
+authors = ["Aries <heyong@kaimeichen.com>"]
+
+[tool.flet.app]
+path = "src"
+
+[tool.flet.macos]
+build_arch = "arm64"
+entitlement."com.apple.security.personal-information.photos-library" = true
+
+
+[tool.poetry.dependencies]
+python = "^3.13.0"
+flet = ">=0.21.0"
+selenium = "4.27.1"
+beautifulsoup4 = "4.12.3"
+pandas = "2.2.3"
+webdriver_manager = "4.0.2"

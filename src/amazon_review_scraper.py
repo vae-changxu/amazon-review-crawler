@@ -26,8 +26,9 @@ class AmazonReviewScraper:
         chrome_options.add_argument('user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36')
         chrome_options.add_argument('--lang=zh-CN')
 
-         # 获取 Chrome Profile 路径
-        root_dir = os.path.dirname(os.path.abspath(__file__))
+        # 获取 Chrome Profile 路径
+        current_dir = os.path.dirname(os.path.abspath(__file__))  # src目录
+        root_dir = os.path.dirname(current_dir)  # 项目根目录
         chrome_profile_path = os.path.join(root_dir, 'chrome_profile')
 
         # 检查是否是首次运行（chrome_profile目录不存在）
@@ -284,15 +285,7 @@ class AmazonReviewScraper:
         return reviews_data
     
     # 保存数据到Excel
-    def save_to_excel(self, reviews_data, output_file='amazon_reviews.xlsx'):
-        # df_data = []
-        # for review in reviews_data:
-        #     review_copy = review.copy()
-        #     review_copy['缩略图'] = '; '.join(review['评论图片']['缩略图'])
-        #     review_copy['原图'] = '; '.join(review['评论图片']['原图'])
-        #     del review_copy['评论图片']
-        #     df_data.append(review_copy)
-            
+    def save_to_excel(self, reviews_data, output_file='amazon_reviews.xlsx'):            
         df = pd.DataFrame(reviews_data)
         df.to_excel(output_file, index=False)
         print(f"评论已保存到 {output_file}")

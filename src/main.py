@@ -1,6 +1,6 @@
 import flet as ft
 import os
-from amazon_review_scraper import AmazonReviewScraper
+from src.amazon_review_scraper import AmazonReviewScraper
 import re
 
 class AmazonReviewScraperApp:
@@ -242,7 +242,6 @@ class AmazonReviewScraperApp:
         # 禁用输入控件
         self.disable_controls()
         
-        # 开始爬取
         try:
             self.status_text.value = "正在初始化爬虫..."
             self.progress_bar.visible = True
@@ -259,6 +258,17 @@ class AmazonReviewScraperApp:
                 # 构建URL参数
                 url_params = self.build_url_params()
                 
+                # 获取项目根目录
+                current_dir = os.path.dirname(os.path.abspath(__file__))
+                root_dir = os.path.dirname(current_dir)
+                
+                # 创建output目录（如果不存在）
+                output_dir = os.path.join(root_dir, 'output')
+                os.makedirs(output_dir, exist_ok=True)
+                
+                # 构建输出文件的完整路径
+                output_file = os.path.join(output_dir, f'amazon-reviews-{self.product_id.value}.xlsx')
+                
                 reviews = scraper.get_reviews(
                     self.product_id.value, 
                     int(self.pages.value),
@@ -267,10 +277,11 @@ class AmazonReviewScraperApp:
                 
                 if reviews:
                     # 保存结果
-                    output_file = f'amazon_reviews_{self.product_id.value}.xlsx'
                     scraper.save_to_excel(reviews, output_file)
                     
-                    self.status_text.value = f"爬取完成！共获取{len(reviews)}条评论\n结果已保存至: {output_file}"
+                    # 显示绝对路径
+                    abs_path = os.path.abspath(output_file)
+                    self.status_text.value = f"爬取完成！共获取{len(reviews)}条评论\n结果已保存至:\n{abs_path}"
                     self.status_text.color = ft.colors.GREEN_700
                 else:
                     self.status_text.value = "未找到评论或爬取失败"

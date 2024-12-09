@@ -30,7 +30,10 @@ class AmazonReviewScraper:
         root_dir = os.path.dirname(os.path.abspath(__file__))
         chrome_profile_path = os.path.join(root_dir, 'chrome_profile')
 
-        # 设置用户数据目录，确保在此目录下可保存登录信息
+        # 检查是否是首次运行（chrome_profile目录不存在）
+        is_first_run = not os.path.exists(chrome_profile_path)
+
+        # 设置用户数据目录
         chrome_options.add_argument(f'--user-data-dir={chrome_profile_path}')
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--no-sandbox')
@@ -40,6 +43,16 @@ class AmazonReviewScraper:
         chrome_options.add_experimental_option('useAutomationExtension', False)
 
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+
+        # 如果是首次运行，自动打开亚马逊登录页面并等待较长时间
+        if is_first_run:
+            print("\n检测到首次运行，请在打开的浏览器窗口中登录亚马逊账号...")
+            self.driver.get('https://www.amazon.com/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.com%2F%3Fref_%3Dnav_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=usflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&')
+            
+            # 等待用户登录（1.5分钟）
+            print("请在1.5分钟内完成登录操作...")
+            time.sleep(90)  # 给用户1.5分钟时间登录
+            print("继续执行爬取操作...\n")
 
         self.month_map = {
             'January': '01', 'February': '02', 'March': '03',

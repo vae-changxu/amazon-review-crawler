@@ -61,3 +61,8 @@ htmlcov/
 .Trashes
 ehthumbs.db
 Thumbs.db 
+
+# Flet storage
+storage/
+storage/data/
+storage/temp/

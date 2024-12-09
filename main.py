@@ -14,7 +14,7 @@ class AmazonReviewScraperApp:
         self.page.title = "亚马逊评论爬虫"
         self.page.window_width = 800
         self.page.window_height = 800
-        self.page.window_resizable = False
+        self.page.window_resizable = True
         self.page.window_center = True
         self.page.window_top = 50  # 设置窗口距离屏幕顶部的距离为50像素
         self.page.window_always_on_top = True  # 设置窗口始终置顶
@@ -347,6 +347,7 @@ class AmazonReviewScraperApp:
         return params
 
 def main(page: ft.Page):
+    page.no_storage = True  # 禁用存储功能
     app = AmazonReviewScraperApp(page)
 
 if __name__ == "__main__":

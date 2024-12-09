@@ -1,69 +1,68 @@
 image:
-- Visual Studio 2019
-- macOS
-- Ubuntu
+  - Visual Studio 2019
+  - macOS
 
 skip_branch_with_pr: true
-stack: python 3.10
+stack: python 3.13
 
 environment:
   GITHUB_TOKEN:
-    secure: Ti46nPnZgFh0nRteU6ma0EhJnCTW7PaMn9hnnewZl4gBFPyRQnXNCwGog02+MRLX
+    secure: hEp/g48KzstKyiDP+GIylG4JAsWF9v3/9yzam53hb/b+qOM23/e9jxsxiRwyJfjCQjFVLcRnAxUJIurM3nrYCDXS9sY8V32rX9MB/ZZcVx3ScRY6XSZosB0OfitTxVdI
 
-install:
-- pip install -r requirements.txt
+for:
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2019
 
-build_script:
-- flet pack main.py --name counter --icon icon.png --product-name counter --product-version "1.2.3" --copyright "Copyright (c) 2022 YourCompany Inc."
+    install:
+      - python -m pip install --upgrade pip
+      - pip install -r requirements.txt
+      - pip install flet pyinstaller
+
+    build_script:
+      - flet pack src/main.py --name "amazon-review-scraper" --icon src/assets/icon_windows.png --product-name "亚马逊评论爬虫" --product-version "1.0.0"
+
+    after_build:
+      - 7z a amazon-review-scraper-windows.zip %CD%\dist\*.exe
+
+    artifacts:
+      - path: amazon-review-scraper-windows.zip
+
+  -
+    matrix:
+      only:
+        - image: macOS
+
+    install:
+      - python3 -m pip install --upgrade pip
+      - pip3 install -r requirements.txt
+      - pip3 install flet pyinstaller
+
+    build_script:
+      - flet pack src/main.py --name "amazon-review-scraper" --icon src/assets/icon_macos.png --product-name "亚马逊评论爬虫" --product-version "1.0.0" --build-arch arm64
+
+    after_build:
+      - tar -czvf amazon-review-scraper-macos.tar.gz -C dist amazon-review-scraper.app
+
+    artifacts:
+      - path: amazon-review-scraper-macos.tar.gz
 
 test: off
 
-# Publish artifacts to GitHub Releases on "tag" builds
 deploy:
   provider: GitHub
   auth_token: $(GITHUB_TOKEN)
+  artifact: amazon-review-scraper-windows.zip, amazon-review-scraper-macos.tar.gz
+  draft: true
+  prerelease: false
   on:
     APPVEYOR_REPO_TAG: true
 
-#
-#   Windows package
-# 
-for:
--
-  matrix:
-    only:
-    - image: Visual Studio 2019
-
-  after_build:
-  - 7z a counter-windows.zip %CD%\dist\*.exe
-
-  artifacts:
-  - path: counter-windows.zip
-
-#
-#   macOS package
-# 
--
-  matrix:
-    only:
-    - image: macOS
-
-  after_build:
-  - tar -czvf counter-macos.tar.gz -C dist counter.app
-
-  artifacts:
-  - path: counter-macos.tar.gz
-
-#
-#   Linux package
-# 
--
-  matrix:
-    only:
-    - image: Ubuntu
-
-  after_build:
-  - tar -czvf counter-linux.tar.gz -C dist counter
-
-  artifacts:
-  - path: counter-linux.tar.gz
+notifications:
+  - provider: Email
+    to:
+      - heyong@kaimeichen.com
+    on_build_success: true
+    on_build_failure: true
+    on_build_status_changed: true

@@ -3,7 +3,7 @@ image:
   - macOS
 
 skip_branch_with_pr: true
-stack: python 3.13
+stack: python 3.12  # 改用 Python 3.12，这是目前可用的最新版本
 
 environment:
   GITHUB_TOKEN:
@@ -17,8 +17,12 @@ for:
 
     install:
       - python -m pip install --upgrade pip
-      - pip install -r requirements.txt
-      - pip install flet pyinstaller
+      - pip install flet==0.25.1
+      - pip install selenium==4.27.1
+      - pip install beautifulsoup4==4.12.3
+      - pip install pandas==2.1.4  # 使用较早的稳定版本
+      - pip install webdriver-manager==4.0.2
+      - pip install pyinstaller
 
     build_script:
       - flet pack src/main.py --name "amazon-review-scraper" --icon src/assets/icon_windows.png --product-name "亚马逊评论爬虫" --product-version "1.0.0"
@@ -36,8 +40,12 @@ for:
 
     install:
       - python3 -m pip install --upgrade pip
-      - pip3 install -r requirements.txt
-      - pip3 install flet pyinstaller
+      - pip3 install flet==0.25.1
+      - pip3 install selenium==4.27.1
+      - pip3 install beautifulsoup4==4.12.3
+      - pip3 install pandas==2.1.4
+      - pip3 install webdriver-manager==4.0.2
+      - pip3 install pyinstaller
 
     build_script:
       - flet pack src/main.py --name "amazon-review-scraper" --icon src/assets/icon_macos.png --product-name "亚马逊评论爬虫" --product-version "1.0.0" --build-arch arm64
